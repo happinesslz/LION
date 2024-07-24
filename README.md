@@ -94,7 +94,7 @@ Please refer to [INSTALL.md](docs/INSTALL.md) for the installation of LION codeb
 
 
 ## Getting Started
-Please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more usage about LION.
+For the training and inference processes of LION, please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more usage about LION.
 
 ## TODO
 - [x] Release the paper.
