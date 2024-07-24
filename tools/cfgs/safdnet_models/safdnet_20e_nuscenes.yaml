@@ -1,0 +1,193 @@
+CLASS_NAMES: ['car','truck', 'construction_vehicle', 'bus', 'trailer',
+              'barrier', 'motorcycle', 'bicycle', 'pedestrian', 'traffic_cone']
+
+DATA_CONFIG:
+    _BASE_CONFIG_: cfgs/dataset_configs/nuscenes_dataset.yaml
+    POINT_CLOUD_RANGE: [-54.0, -54.0, -5.0, 54.0, 54.0, 3.0]
+
+    DATA_AUGMENTOR:
+        DISABLE_AUG_LIST: ['placeholder']
+        AUG_CONFIG_LIST:
+          - NAME: gt_sampling
+            DB_INFO_PATH:
+              - nuscenes_dbinfos_10sweeps_withvelo.pkl
+
+            USE_SHARED_MEMORY: True
+            DB_DATA_PATH:
+              - nuscenes_10sweeps_withvelo_lidar.npy
+
+            PREPARE: {
+              filter_by_min_points: [
+                  'car:5','truck:5', 'construction_vehicle:5', 'bus:5', 'trailer:5',
+                  'barrier:5', 'motorcycle:5', 'bicycle:5', 'pedestrian:5', 'traffic_cone:5'
+              ],
+            }
+
+            SAMPLE_GROUPS: [
+              'car:2','truck:3', 'construction_vehicle:7', 'bus:4', 'trailer:6',
+              'barrier:2', 'motorcycle:6', 'bicycle:6', 'pedestrian:2', 'traffic_cone:2'
+            ]
+
+            NUM_POINT_FEATURES: 5
+            DATABASE_WITH_FAKELIDAR: False
+            REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
+            LIMIT_WHOLE_SCENE: True
+
+          - NAME: random_world_flip
+            ALONG_AXIS_LIST: ['x', 'y']
+
+          - NAME: random_world_rotation
+            WORLD_ROT_ANGLE: [-0.78539816, 0.78539816]
+
+          - NAME: random_world_scaling
+            WORLD_SCALE_RANGE: [0.9, 1.1]
+
+          - NAME: random_world_translation
+            NOISE_TRANSLATE_STD: [0.5, 0.5, 0.5]
+
+    DATA_PROCESSOR:
+      - NAME: mask_points_and_boxes_outside_range
+        REMOVE_OUTSIDE_BOXES: True
+
+      - NAME: shuffle_points
+        SHUFFLE_ENABLED: {
+          'train': True,
+          'test': True
+        }
+
+      - NAME: transform_points_to_voxels_placeholder
+        VOXEL_SIZE: [0.3, 0.3, 8.0]
+
+MODEL:
+    NAME: TransFusion
+
+    VFE:
+        NAME: DynPillarVFE
+        WITH_DISTANCE: False
+        USE_ABSLOTE_XYZ: True
+        USE_NORM: True
+        NUM_FILTERS: [128, 128]
+
+    BACKBONE_3D:
+        NAME: SparseHEDNet2D
+
+        SED_FEATURE_DIM: 128
+        SED_NUM_LAYERS: 6
+        SED_NUM_SBB: [2, 1, 1]
+        SED_DOWN_STRIDE: [1, 2, 2]
+        SED_DOWN_KERNEL_SIZE: [3, 3, 3]
+
+        AFD_FEATURE_DIM: 128
+        AFD_NUM_LAYERS: 1
+        AFD_NUM_SBB: [4, 4, 4]
+        AFD_DOWN_STRIDE: [1, 2, 2]
+        AFD_DOWN_KERNEL_SIZE: [3, 3, 3]
+
+        AFD: True
+        FG_THRESHOLD: 0.4
+        FEATMAP_STRIDE: 2
+        DETACH_FEATURE: True
+        GREOUP_POOLING_KERNEL_SIZE: [9, 15, 5, 5]
+        GROUP_CLASS_NAMES: [
+            ['car', 'truck', 'construction_vehicle'],
+            ['bus', 'trailer'],
+            ['barrier', 'motorcycle', 'bicycle', 'pedestrian', 'traffic_cone'],
+        ]
+
+    DENSE_HEAD:
+        NAME: SparseTransFusionHead
+        CLASS_AGNOSTIC: False
+        USE_BIAS_BEFORE_NORM: False
+        USE_TENSOR_MASK: True
+
+        INPUT_FEATURES: 128
+        NUM_PROPOSALS: 200
+        HIDDEN_CHANNEL: 128
+        NUM_CLASSES: 10
+        NUM_HEADS: 8
+        NMS_KERNEL_SIZE: 3
+        FFN_CHANNEL: 256
+        DROPOUT: 0.1
+        BN_MOMENTUM: 0.1
+        ACTIVATION: relu
+
+        NUM_HM_CONV: 2
+        SEPARATE_HEAD_CFG:
+            HEAD_ORDER: ['center', 'height', 'dim', 'rot', 'vel']
+            HEAD_DICT: {
+                'center': {'out_channels': 2, 'num_conv': 2},
+                'height': {'out_channels': 1, 'num_conv': 2},
+                'dim': {'out_channels': 3, 'num_conv': 2},
+                'rot': {'out_channels': 2, 'num_conv': 2},
+                'vel': {'out_channels': 2, 'num_conv': 2},
+            }
+
+        TARGET_ASSIGNER_CONFIG:
+            DATASET: nuScenes
+            FEATURE_MAP_STRIDE: 2
+            GAUSSIAN_OVERLAP: 0.1
+            MIN_RADIUS: 2
+            HUNGARIAN_ASSIGNER:
+                cls_cost: {'gamma': 2.0, 'alpha': 0.25, 'weight': 0.15}
+                reg_cost: {'weight': 0.25}
+                iou_cost: {'weight': 0.25}
+
+        LOSS_CONFIG:
+            LOSS_WEIGHTS: {
+                    'cls_weight': 1.0,
+                    'bbox_weight': 0.25,
+                    'hm_weight': 1.0,
+                    'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.2, 0.2]
+                }
+            LOSS_CLS:
+                use_sigmoid: True
+                gamma: 2.0
+                alpha: 0.25
+            LOSS_IOU: False
+            LOSS_IOU_REG: False
+
+        POST_PROCESSING:
+            SCORE_THRESH: 0.0
+            POST_CENTER_RANGE: [-61.2, -61.2, -10.0, 61.2, 61.2, 10.0]
+            USE_IOU_TO_RECTIFY_SCORE: False
+            IOU_RECTIFIER: [0.5]
+
+        NMS_CONFIG:
+            NMS_TYPE: nms_gpu
+            NMS_THRESH: 0.2
+            NMS_PRE_MAXSIZE: 1000
+            NMS_POST_MAXSIZE: 100
+            SCORE_THRES: 0.
+
+    POST_PROCESSING:
+        RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+        SCORE_THRESH: 0.1
+        OUTPUT_RAW_SCORE: False
+        EVAL_METRIC: kitti
+
+OPTIMIZATION:
+    BATCH_SIZE_PER_GPU: 2
+    NUM_EPOCHS: 20
+
+    OPTIMIZER: adam_onecycle
+    LR: 0.003
+    WEIGHT_DECAY: 0.05
+    MOMENTUM: 0.9
+
+    MOMS: [0.95, 0.85]
+    PCT_START: 0.4
+    DIV_FACTOR: 10
+    DECAY_STEP_LIST: [35, 45]
+    LR_DECAY: 0.1
+    LR_CLIP: 0.0000001
+
+    LR_WARMUP: False
+    WARMUP_EPOCH: 1
+
+    GRAD_NORM_CLIP: 10
+    LOSS_SCALE_FP16: 32
+
+HOOK:
+    DisableAugmentationHook:
+        DISABLE_AUG_LIST: ['gt_sampling']
+        NUM_LAST_EPOCHS: 4

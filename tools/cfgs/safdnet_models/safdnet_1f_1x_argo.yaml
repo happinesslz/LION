@@ -1,0 +1,186 @@
+CLASS_NAMES: ['Regular_vehicle', 'Pedestrian', 'Bicyclist', 'Motorcyclist', 'Wheeled_rider',
+            'Bollard', 'Construction_cone', 'Sign', 'Construction_barrel', 'Stop_sign', 'Mobile_pedestrian_crossing_sign',
+            'Large_vehicle', 'Bus', 'Box_truck', 'Truck', 'Vehicular_trailer', 'Truck_cab', 'School_bus', 'Articulated_bus',
+            'Message_board_trailer', 'Bicycle', 'Motorcycle', 'Wheeled_device', 'Wheelchair', 'Stroller', 'Dog']
+
+DATA_CONFIG:
+    _BASE_CONFIG_: cfgs/dataset_configs/argo2_dataset.yaml
+    POINT_CLOUD_RANGE: [-200, -200, -4, 200, 200, 4]
+
+    DATA_AUGMENTOR:
+        DISABLE_AUG_LIST: ['placeholder']
+        AUG_CONFIG_LIST:
+            - NAME: gt_sampling
+              DB_INFO_PATH:
+                  - argo2_dbinfos.pkl
+
+              USE_SHARED_MEMORY: False  # set it to True to speed up (it costs about 15GB shared memory)
+              PREPARE: {
+                  filter_by_min_points: [
+                    'Regular_vehicle:5', 'Pedestrian:5', 'Bicyclist:5', 'Motorcyclist:5', 'Wheeled_rider:5',
+                    'Bollard:5', 'Construction_cone:5', 'Sign:5', 'Construction_barrel:5', 'Stop_sign:5',
+                    'Mobile_pedestrian_crossing_sign:5', 'Large_vehicle:5', 'Bus:5', 'Box_truck:5', 'Truck:5',
+                    'Vehicular_trailer:5', 'Truck_cab:5', 'School_bus:5', 'Articulated_bus:5', 'Message_board_trailer:5',
+                    'Bicycle:5', 'Motorcycle:5', 'Wheeled_device:5', 'Wheelchair:5', 'Stroller:5',
+                    'Dog:5'
+                  ],
+              }
+
+              SAMPLE_GROUPS: [
+                    'Regular_vehicle:1', 'Pedestrian:2', 'Bicyclist:2', 'Motorcyclist:2', 'Wheeled_rider:2',
+                    'Bollard:2', 'Construction_cone:2', 'Sign:2', 'Construction_barrel:2', 'Stop_sign:2',
+                    'Mobile_pedestrian_crossing_sign:1', 'Large_vehicle:1', 'Bus:1', 'Box_truck:1', 'Truck:1',
+                    'Vehicular_trailer:1', 'Truck_cab:1', 'School_bus:1', 'Articulated_bus:1', 'Message_board_trailer:2',
+                    'Bicycle:2', 'Motorcycle:2', 'Wheeled_device:2', 'Wheelchair:2', 'Stroller:2',
+                    'Dog:2'
+                ]
+              NUM_POINT_FEATURES: 4
+              DATABASE_WITH_FAKELIDAR: False
+              REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
+              LIMIT_WHOLE_SCENE: True
+
+            - NAME: random_world_flip
+              ALONG_AXIS_LIST: ['x', 'y']
+
+            - NAME: random_world_rotation
+              WORLD_ROT_ANGLE: [-0.78539816, 0.78539816]
+
+            - NAME: random_world_scaling
+              WORLD_SCALE_RANGE: [0.95, 1.05]
+
+            - NAME: random_world_translation
+              NOISE_TRANSLATE_STD: [0.5, 0.5, 0.5]
+
+    DATA_PROCESSOR:
+        - NAME: mask_points_and_boxes_outside_range
+          REMOVE_OUTSIDE_BOXES: True
+
+        - NAME: shuffle_points
+          SHUFFLE_ENABLED: {
+            'train': True,
+            'test': True
+          }
+
+        - NAME: transform_points_to_voxels_placeholder
+          VOXEL_SIZE: [0.1, 0.1, 0.2]
+
+MODEL:
+    NAME: CenterPoint
+
+    VFE:
+        NAME: DynamicVoxelVFE
+        WITH_DISTANCE: False
+        USE_ABSLOTE_XYZ: True
+        USE_NORM: True
+        NUM_FILTERS: [64, 64]
+
+    BACKBONE_3D:
+        NAME: SparseHEDNet
+
+        SED_FEATURE_DIM: 64
+        SED_NUM_LAYERS: 1
+        SED_NUM_SBB: [4, 2, 2]
+        SED_DOWN_STRIDE: [1, 2, 2]
+        SED_DOWN_KERNEL_SIZE: [3, 3, 3]
+
+        AFD_FEATURE_DIM: 64
+        AFD_NUM_LAYERS: 1
+        AFD_NUM_SBB: [8, 4, 4]
+        AFD_DOWN_STRIDE: [1, 2, 2]
+        AFD_DOWN_KERNEL_SIZE: [3, 3, 3]
+
+        AFD: True
+        FG_THRESHOLD: 0.4
+        FEATMAP_STRIDE: 8
+        DETACH_FEATURE: True
+        GREOUP_POOLING_KERNEL_SIZE: [7, 13, 3, 3]
+        GROUP_CLASS_NAMES: [
+            ['Regular_vehicle',],
+            ['Large_vehicle', 'Bus', 'Box_truck', 'Truck', 'Vehicular_trailer', 'Truck_cab', 'School_bus', 'Articulated_bus', 'Message_board_trailer'],
+            ['Pedestrian', 'Bicyclist', 'Motorcyclist', 'Wheeled_rider', \
+             'Bollard', 'Construction_cone', 'Sign', 'Construction_barrel', 'Stop_sign', 'Mobile_pedestrian_crossing_sign', \
+             'Bicycle', 'Motorcycle', 'Wheeled_device', 'Wheelchair', 'Stroller', 'Dog'],
+        ]
+
+    DENSE_HEAD:
+        NAME: SparseCenterHead
+        CLASS_AGNOSTIC: False
+
+        CLASS_NAMES_EACH_HEAD: [
+            ['Regular_vehicle',],
+            ['Pedestrian', 'Bicyclist', 'Motorcyclist', 'Wheeled_rider'],
+            ['Bollard', 'Construction_cone', 'Sign', 'Construction_barrel', 'Stop_sign', 'Mobile_pedestrian_crossing_sign'],
+            ['Large_vehicle', 'Bus', 'Box_truck', 'Truck', 'Vehicular_trailer', 'Truck_cab', 'School_bus', 'Articulated_bus', 'Message_board_trailer'],
+            ['Bicycle', 'Motorcycle', 'Wheeled_device', 'Wheelchair', 'Stroller'],
+            ['Dog'],
+        ]
+
+        INPUT_FEATURES: 64
+        HEAD_CONV_TYPE: subm
+        USE_BIAS_BEFORE_NORM: False
+        NUM_HM_CONV: 2
+
+        BN_EPS: 0.001
+        BN_MOM: 0.01
+        SEPARATE_HEAD_CFG:
+            HEAD_ORDER: ['center', 'center_z', 'dim', 'rot']
+            HEAD_DICT: {
+                'center': {'out_channels': 2, 'num_conv': 2},
+                'center_z': {'out_channels': 1, 'num_conv': 2},
+                'dim': {'out_channels': 3, 'num_conv': 2},
+                'rot': {'out_channels': 2, 'num_conv': 2},
+            }
+
+        TARGET_ASSIGNER_CONFIG:
+            FEATURE_MAP_STRIDE: 8
+            NUM_MAX_OBJS: 500
+            GAUSSIAN_OVERLAP: 0.1
+            MIN_RADIUS: 2
+
+        LOSS_CONFIG:
+            LOSS_WEIGHTS: {
+                'cls_weight': 1.0,
+                'loc_weight': 0.25,
+                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.2, 0.2]
+            }
+
+        POST_PROCESSING:
+            SCORE_THRESH: 0.1
+            POST_CENTER_LIMIT_RANGE: [-200, -200, -20, 200, 200, 20]
+            MAX_OBJ_PER_SAMPLE: 500
+            NMS_CONFIG:
+                NMS_TYPE: nms_gpu
+                NMS_THRESH: 0.2
+                NMS_PRE_MAXSIZE: 1000
+                NMS_POST_MAXSIZE: 83
+
+    POST_PROCESSING:
+        RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+        EVAL_METRIC: kitti
+
+OPTIMIZATION:
+    BATCH_SIZE_PER_GPU: 2
+    NUM_EPOCHS: 12
+
+    OPTIMIZER: adam_onecycle
+    LR: 0.003
+    WEIGHT_DECAY: 0.05
+    MOMENTUM: 0.9
+
+    MOMS: [0.95, 0.85]
+    PCT_START: 0.1
+    DIV_FACTOR: 100
+    DECAY_STEP_LIST: [35, 45]
+    LR_DECAY: 0.1
+    LR_CLIP: 0.0000001
+
+    LR_WARMUP: False
+    WARMUP_EPOCH: 1
+
+    GRAD_NORM_CLIP: 10
+    LOSS_SCALE_FP16: 32.0
+
+HOOK:
+    DisableAugmentationHook:
+        DISABLE_AUG_LIST: ['gt_sampling', 'random_world_flip','random_world_rotation','random_world_scaling', 'random_world_translation']
+        NUM_LAST_EPOCHS: 1

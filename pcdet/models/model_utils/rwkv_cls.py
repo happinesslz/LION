@@ -296,9 +296,6 @@ class Block(nn.Module):
         self.ln1 = nn.LayerNorm(n_embd)
         self.ln2 = nn.LayerNorm(n_embd)
         self.drop_path = DropPath(drop_path) if drop_path > 0. else nn.Identity()
-        print('###drop_path:', drop_path)
-        print('###drop_path:', drop_path)
-        print('###drop_path:', drop_path)
         if self.layer_id == 0:
             self.ln0 = nn.LayerNorm(n_embd)
 

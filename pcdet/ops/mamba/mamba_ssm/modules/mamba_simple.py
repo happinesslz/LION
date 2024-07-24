@@ -317,7 +317,7 @@ class Mamba(nn.Module):
 
 
 class Block(nn.Module):
-    def __init__(self, d_model, d_state=16, d_conv=4, expand=2, drop_path=0., post_norm=True, **kwargs):
+    def __init__(self, d_model, d_state=16, d_conv=4, expand=2, drop_path=0., post_norm=True, with_cp=False,**kwargs):
         super().__init__()
         self.mamba = Mamba(
             # This module uses roughly 3 * expand * d_model^2 parameters
@@ -329,11 +329,21 @@ class Block(nn.Module):
         self.norm = nn.LayerNorm(d_model)
         self.drop_path = DropPath(drop_path) if drop_path > 0. else nn.Identity()
         self.post_norm = post_norm
+        self.with_cp = with_cp
 
     def forward(self, x):
         if self.post_norm:
-            x = x + self.drop_path(self.norm(self.mamba(x)))
+            if self.with_cp:
+                x_out = cp.checkpoint(self.mamba, x)
+                x = x + self.drop_path(self.norm(x_out))
+            else:
+                x = x + self.drop_path(self.norm(self.mamba(x)))
         else:
-            x = x + self.drop_path(self.mamba(self.norm(x)))
+            if self.with_cp:
+                x = self.norm(x)
+                x_out = cp.checkpoint(self.mamba, x)
+                x = x + self.drop_path(x_out)
+            else:
+                x = x + self.drop_path(self.mamba(self.norm(x)))
 
         return x
