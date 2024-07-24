@@ -7,10 +7,9 @@ from .spconv2d_backbone_pillar import PillarRes18BackBone_one_stride
 from .spconv_backbone_voxelnext import VoxelResBackBone8xVoxelNeXt
 from .spconv_backbone_voxelnext2d import VoxelResBackBone8xVoxelNeXt2D
 
-from .lion_backbone_one_stride import Linear3DBackboneOneStride
 from .spconv_backbone_sed import HEDNet
 from .hednet import SparseHEDNet, SparseHEDNet2D
-from .lion_backbone_one_stride import Linear3DBackboneOneStride_Sparse
+from .lion_backbone_one_stride import LION3DBackboneOneStride, LION3DBackboneOneStride_Sparse
 
 __all__ = {
     'VoxelBackBone8x': VoxelBackBone8x,
@@ -23,9 +22,9 @@ __all__ = {
     'PillarRes18BackBone_one_stride': PillarRes18BackBone_one_stride,
     'VoxelResBackBone8xVoxelNeXt': VoxelResBackBone8xVoxelNeXt,
     'VoxelResBackBone8xVoxelNeXt2D': VoxelResBackBone8xVoxelNeXt2D,
-    'Linear3DBackboneOneStride': Linear3DBackboneOneStride,
     'HEDNet': HEDNet,
     'SparseHEDNet': SparseHEDNet,
     'SparseHEDNet2D': SparseHEDNet2D,
-    'Linear3DBackboneOneStride_Sparse': Linear3DBackboneOneStride_Sparse,
+    'LION3DBackboneOneStride': LION3DBackboneOneStride,
+    'LION3DBackboneOneStride_Sparse': LION3DBackboneOneStride_Sparse,
 }

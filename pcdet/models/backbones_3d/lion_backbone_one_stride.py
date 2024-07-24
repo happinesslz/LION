@@ -334,9 +334,9 @@ LinearOperatorMap = {
 }
 
 
-class LinearBlock(nn.Module):
+class LIONLayer(nn.Module):
     def __init__(self, dim, nums, window_shape, group_size, direction, shift, operator=None, layer_id=0, n_layer=0):
-        super(LinearBlock, self).__init__()
+        super(LIONLayer, self).__init__()
 
         self.window_shape = window_shape
         self.group_size = group_size
@@ -351,7 +351,7 @@ class LinearBlock(nn.Module):
             operator_cfg['layer_id'] = i + layer_id
             operator_cfg['n_layer'] = n_layer
 #             operator_cfg['with_cp'] = layer_id >= 16
-            operator_cfg['with_cp'] = layer_id >= 0
+            operator_cfg['with_cp'] = layer_id >= 8
             print('### use part of checkpoint!!')
             block_list.append(LinearOperatorMap[operator.NAME](**operator_cfg))
 
@@ -373,25 +373,6 @@ class LinearBlock(nn.Module):
         return x
 
 
-class PositionEmbeddingLearned_v2(nn.Module):
-    """
-    Absolute pos embedding, learned.
-    """
-
-    def __init__(self, input_channel, num_pos_feats):
-        super().__init__()
-        self.position_embedding_head = nn.Sequential(
-            nn.Linear(input_channel, num_pos_feats),
-            nn.LayerNorm(num_pos_feats),
-            nn.GELU(),
-            # nn.Linear(num_pos_feats, num_pos_feats)
-            )
-
-    def forward(self, xyz):
-        position_embedding = self.position_embedding_head(xyz)
-        return position_embedding
-
-
 class PositionEmbeddingLearned(nn.Module):
     """
     Absolute pos embedding, learned.
@@ -410,7 +391,7 @@ class PositionEmbeddingLearned(nn.Module):
         return position_embedding
 
 
-class LinearLayer(nn.Module):
+class LIONBlock(nn.Module):
     def __init__(self, dim: int, depth: int, down_scales: list, window_shape, group_size, direction, shift=False,
                  operator=None, layer_id=0, n_layer=0):
         super().__init__()
@@ -425,7 +406,7 @@ class LinearLayer(nn.Module):
 
         shift = [False, shift]
         for idx in range(depth):
-            self.encoder.append(LinearBlock(dim, 1, window_shape, group_size, direction, shift[idx], operator, layer_id + idx * 2, n_layer))
+            self.encoder.append(LIONLayer(dim, 1, window_shape, group_size, direction, shift[idx], operator, layer_id + idx * 2, n_layer))
             self.pos_emb_list.append(PositionEmbeddingLearned(input_channel=3, num_pos_feats=dim))
             self.downsample_list.append(PatchMerging3DV3(dim, dim, down_scale=down_scales[idx], norm_layer=norm_fn))
 
@@ -433,7 +414,7 @@ class LinearLayer(nn.Module):
         self.decoder_norm = nn.ModuleList()
         self.upsample_list = nn.ModuleList()
         for idx in range(depth):
-            self.decoder.append(LinearBlock(dim, 1, window_shape, group_size, direction, shift[idx], operator, layer_id + 2 * (idx + depth), n_layer))
+            self.decoder.append(LIONLayer(dim, 1, window_shape, group_size, direction, shift[idx], operator, layer_id + 2 * (idx + depth), n_layer))
             self.decoder_norm.append(norm_fn(dim))
             
             self.upsample_list.append(PatchExpanding3D(dim))
@@ -513,7 +494,7 @@ class MLPBlock(nn.Module):
         return mpl_feats
 
 #for waymo and nuscenes, kitti, once
-class Linear3DBackboneOneStride(nn.Module):
+class LION3DBackboneOneStride(nn.Module):
     def __init__(self, model_cfg, input_channels, grid_size, **kwargs):
         super().__init__()
 
@@ -554,7 +535,7 @@ class Linear3DBackboneOneStride(nn.Module):
         assert len(self.layer_dim) == len(depths)
 
         
-        self.linear_1 = LinearLayer(self.layer_dim[0], depths[0], layer_down_scales[0], self.window_shape[0],
+        self.linear_1 = LIONBlock(self.layer_dim[0], depths[0], layer_down_scales[0], self.window_shape[0],
                                     self.group_size[0], direction, shift=shift, operator=self.linear_operator, layer_id=0, n_layer=self.n_layer)  ##[27, 27, 32] --》 [13, 13, 32]
 
         self.dow1 = PatchMerging3DV3(self.layer_dim[0], self.layer_dim[0], down_scale=[1, 1, 2],
@@ -562,7 +543,7 @@ class Linear3DBackboneOneStride(nn.Module):
         
 
         # [944, 944, 16] -> [472, 472, 8]
-        self.linear_2 = LinearLayer(self.layer_dim[1], depths[1], layer_down_scales[1], self.window_shape[1],
+        self.linear_2 = LIONBlock(self.layer_dim[1], depths[1], layer_down_scales[1], self.window_shape[1],
                                     self.group_size[1], direction, shift=shift, operator=self.linear_operator, layer_id=8, n_layer=self.n_layer)
 
         self.dow2 = PatchMerging3DV3(self.layer_dim[1], self.layer_dim[1], down_scale=[1, 1, 2],
@@ -570,20 +551,20 @@ class Linear3DBackboneOneStride(nn.Module):
 
 
         #  [236, 236, 8] -> [236, 236, 4]
-        self.linear_3 = LinearLayer(self.layer_dim[2], depths[2], layer_down_scales[2], self.window_shape[2],
+        self.linear_3 = LIONBlock(self.layer_dim[2], depths[2], layer_down_scales[2], self.window_shape[2],
                                     self.group_size[2], direction, shift=shift, operator=self.linear_operator, layer_id=16, n_layer=self.n_layer)
 
         self.dow3 = PatchMerging3DV3(self.layer_dim[2], self.layer_dim[3], down_scale=[1, 1, 2],
                                      norm_layer=norm_fn, diffusion=diffusion, diff_scale=diff_scale)
 
         #  [236, 236, 4] -> [236, 236, 2]
-        self.linear_4 = LinearLayer(self.layer_dim[3], depths[3], layer_down_scales[3], self.window_shape[3],
+        self.linear_4 = LIONBlock(self.layer_dim[3], depths[3], layer_down_scales[3], self.window_shape[3],
                                     self.group_size[3], direction, shift=shift, operator=self.linear_operator, layer_id=24, n_layer=self.n_layer)
 
         self.dow4 = PatchMerging3DV3(self.layer_dim[3], self.layer_dim[3], down_scale=[1, 1, 2],
                                      norm_layer=norm_fn, diffusion=diffusion, diff_scale=diff_scale)
 
-        self.linear_out = LinearBlock(self.layer_dim[3], 1, [13, 13, 2], 256, direction=['x', 'y'], shift=shift,
+        self.linear_out = LIONLayer(self.layer_dim[3], 1, [13, 13, 2], 256, direction=['x', 'y'], shift=shift,
                                       operator=self.linear_operator, layer_id=32, n_layer=self.n_layer)
 
         self.num_point_features = dim
@@ -644,7 +625,7 @@ class Linear3DBackboneOneStride(nn.Module):
 
 
 #for argoverse
-class Linear3DBackboneOneStride_Sparse(nn.Module):
+class LION3DBackboneOneStride_Sparse(nn.Module):
     def __init__(self, model_cfg, input_channels, grid_size, **kwargs):
         super().__init__()
 
