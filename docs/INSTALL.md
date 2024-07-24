@@ -25,6 +25,7 @@ We provide some guidance for some difficult to install linear RNN operators.
 * **RWKV**
   * Because the hard code of T_MAX and HEAD_SIZE in RWKV, we should change them according to the running config.
   * Given the config (maximum group_size: 4096, layer_dim: 128, nhead: 4)
+  * You should modify T_MAX and HEAD_SIZE in ``pcdet/ops/wkv6/src/wkv6_cuda.cu`` and ``pcdet/models/model_utils/rwkv_cls.py``.
   * ``T_MAX = 4096`` Because the T_MAX equals with maximum group_size.
   * ``HEAD_SIZE = 128 / 4 = 32`` Because the HEAD_SIZE equals layer_dim divided by nhead.
   * Rerun ``python setup.py develop`` to install the LION codebase.
