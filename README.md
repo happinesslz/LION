@@ -19,7 +19,7 @@
 \* Equal contribution, ✉ Corresponding author.
 <br>
 
-**arXiv 2024**
+[**Project Page**](https://happinesslz.github.io/projects/LION) | [**arXiv 2024**]()
 
 <img src="./assets/all.jpg" alt="Image 2" width="40%" style="margin: 0 auto;" >
 
