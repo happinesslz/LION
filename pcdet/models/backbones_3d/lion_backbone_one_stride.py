@@ -666,7 +666,7 @@ class LION3DBackboneOneStride_Sparse(nn.Module):
         assert len(self.layer_dim) == len(depths)
 
         
-        self.linear_1 = LinearLayer(self.layer_dim[0], depths[0], layer_down_scales[0], self.window_shape[0],
+        self.linear_1 = LIONBlock(self.layer_dim[0], depths[0], layer_down_scales[0], self.window_shape[0],
                                     self.group_size[0], direction, shift=shift, operator=self.linear_operator, layer_id=0, n_layer=self.n_layer)  ##[27, 27, 32] --》 [13, 13, 32]
 
         self.dow1 = PatchMerging3DV3(self.layer_dim[0], self.layer_dim[0], down_scale=[1, 1, 2],
@@ -674,7 +674,7 @@ class LION3DBackboneOneStride_Sparse(nn.Module):
         
 
         # [944, 944, 16] -> [472, 472, 8]
-        self.linear_2 = LinearLayer(self.layer_dim[1], depths[1], layer_down_scales[1], self.window_shape[1],
+        self.linear_2 = LIONBlock(self.layer_dim[1], depths[1], layer_down_scales[1], self.window_shape[1],
                                     self.group_size[1], direction, shift=shift, operator=self.linear_operator, layer_id=8, n_layer=self.n_layer)
 
         self.dow2 = PatchMerging3DV3(self.layer_dim[1], self.layer_dim[1], down_scale=[1, 1, 2],
@@ -682,30 +682,30 @@ class LION3DBackboneOneStride_Sparse(nn.Module):
 
 
         #  [236, 236, 8] -> [236, 236, 4]
-        self.linear_3 = LinearLayer(self.layer_dim[2], depths[2], layer_down_scales[2], self.window_shape[2],
+        self.linear_3 = LIONBlock(self.layer_dim[2], depths[2], layer_down_scales[2], self.window_shape[2],
                                     self.group_size[2], direction, shift=shift, operator=self.linear_operator, layer_id=16, n_layer=self.n_layer)
 
         self.dow3 = PatchMerging3DV3(self.layer_dim[2], self.layer_dim[3], down_scale=[1, 1, 2],
                                      norm_layer=norm_fn, diffusion=diffusion, diff_scale=diff_scale)
 
         #  [236, 236, 4] -> [236, 236, 2]
-        self.linear_4 = LinearLayer(self.layer_dim[3], depths[3], layer_down_scales[3], self.window_shape[3],
+        self.linear_4 = LIONBlock(self.layer_dim[3], depths[3], layer_down_scales[3], self.window_shape[3],
                                     self.group_size[3], direction, shift=shift, operator=self.linear_operator, layer_id=24, n_layer=self.n_layer)
 
         self.dow4 = PatchMerging3DV3(self.layer_dim[3], self.layer_dim[3], down_scale=[1, 1, 2],
                                      norm_layer=norm_fn, diffusion=diffusion, diff_scale=diff_scale)
 
-        self.linear_out = LinearBlock(self.layer_dim[3], 1, [13, 13, 2], 256, direction=['x', 'y'], shift=shift,
+        self.linear_out = LIONLayer(self.layer_dim[3], 1, [13, 13, 2], 256, direction=['x', 'y'], shift=shift,
                                       operator=self.linear_operator, layer_id=32, n_layer=self.n_layer)
         
         self.dow_out = PatchMerging3DV3(self.layer_dim[3], self.layer_dim[3], down_scale=[1, 1, 2],
                                         norm_layer=norm_fn, diffusion=diffusion, diff_scale=diff_scale)
 
-        self.linear_bev1 = LinearBlock(self.layer_dim[3], 1, [25, 25, 1], 512, direction=['x', 'y'], shift=shift,
+        self.linear_bev1 = LIONLayer(self.layer_dim[3], 1, [25, 25, 1], 512, direction=['x', 'y'], shift=shift,
                                       operator=self.linear_operator, layer_id=34, n_layer=self.n_layer)
-        self.linear_bev2 = LinearBlock(self.layer_dim[3], 1, [37, 37, 1], 1024, direction=['x', 'y'], shift=shift,
+        self.linear_bev2 = LIONLayer(self.layer_dim[3], 1, [37, 37, 1], 1024, direction=['x', 'y'], shift=shift,
                                        operator=self.linear_operator, layer_id=36, n_layer=self.n_layer)
-        self.linear_bev3 = LinearBlock(self.layer_dim[3], 1, [51, 51, 1], 2048, direction=['x', 'y'], shift=shift,
+        self.linear_bev3 = LIONLayer(self.layer_dim[3], 1, [51, 51, 1], 2048, direction=['x', 'y'], shift=shift,
                                        operator=self.linear_operator, layer_id=38, n_layer=self.n_layer)
         
 
