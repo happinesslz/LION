@@ -350,7 +350,8 @@ class LIONLayer(nn.Module):
         for i in range(len(direction)):
             operator_cfg['layer_id'] = i + layer_id
             operator_cfg['n_layer'] = n_layer
-            operator_cfg['with_cp'] = layer_id >= 16
+            # operator_cfg['with_cp'] = layer_id >= 16
+            operator_cfg['with_cp'] = layer_id >= 0 ## all lion layer use checkpoint to save GPU memory!! (less 24G for training all models!!!)
             print('### use part of checkpoint!!')
             block_list.append(LinearOperatorMap[operator.NAME](**operator_cfg))
 
