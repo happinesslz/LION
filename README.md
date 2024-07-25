@@ -21,11 +21,11 @@
 
 [**Project Page**](https://happinesslz.github.io/projects/LION) | [**arXiv 2024**]()
 
-<img src="./assets/all.jpg" alt="Image 2" width="40%" style="margin: 0 auto;" >
+<img src="./assets/all.jpg" alt="Image 2" width="60%" style="margin: 0 auto;" >
 
 </div>
 
-[//]: # ([![arXiv]&#40;https://img.shields.io/badge/arXiv-xxx-red?logo=arXiv&logoColor=red&#41;]&#40;&#41;)
+[//]: # "[![arXiv]&#40;https://img.shields.io/badge/arXiv-xxx-red?logo=arXiv&logoColor=red&#41;]&#40;&#41;"
 
 
 ## 🔥 Highlights
