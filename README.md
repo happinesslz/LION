@@ -96,7 +96,33 @@ Please refer to [INSTALL.md](docs/INSTALL.md) for the installation of LION codeb
 
 
 ## Getting Started
-For the training and inference processes of LION, please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more usage about LION.
+We provide all training&evaluation scripts for training our LION, please refer to [tools/](tools/)
+* Train all models of LION on nuScenes
+```shell script
+bash run_train_lion_for_nus.sh
+```
+
+* Train all models of LION on Waymo
+```shell script
+bash run_train_lion_for_waymo.sh
+```
+
+* Train all models of LION on Argoverse V2
+```shell script
+bash run_train_lion_for_argov2.sh
+```
+
+* Train all models of LION on ONCE
+```shell script
+bash run_train_lion_for_once.sh
+```
+
+* Train all models of LION on KITTI
+```shell script
+bash run_train_lion_for_kitti.sh
+```
+
+For more details about LION, please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more usage about LION.
 
 ## TODO
 - [x] Release the paper.
