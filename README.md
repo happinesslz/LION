@@ -25,8 +25,13 @@
 
 </div>
 
-[//]: # "[![arXiv]&#40;https://img.shields.io/badge/arXiv-xxx-red?logo=arXiv&logoColor=red&#41;]&#40;&#41;"
+[![arXiv](https://img.shields.io/badge/arXiv-2407.18232-red?logo=arXiv&logoColor=red)](https://arxiv.org/abs/2407.18232)
 
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/lion-linear-group-rnn-for-3d-object-detection/3d-object-detection-on-waymo-open-dataset)](https://paperswithcode.com/sota/3d-object-detection-on-waymo-open-dataset?p=lion-linear-group-rnn-for-3d-object-detection)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/lion-linear-group-rnn-for-3d-object-detection/3d-object-detection-on-nuscenes-lidar-only)](https://paperswithcode.com/sota/3d-object-detection-on-nuscenes-lidar-only?p=lion-linear-group-rnn-for-3d-object-detection)
+
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/lion-linear-group-rnn-for-3d-object-detection/3d-object-detection-on-argoverse2)](https://paperswithcode.com/sota/3d-object-detection-on-argoverse2?p=lion-linear-group-rnn-for-3d-object-detection)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/lion-linear-group-rnn-for-3d-object-detection/3d-object-detection-on-once)](https://paperswithcode.com/sota/3d-object-detection-on-once?p=lion-linear-group-rnn-for-3d-object-detection)
 
 ## 🔥 Highlights
 
