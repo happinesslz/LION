@@ -36,7 +36,6 @@
 
 </div>
 
-
 ## 🔥 Highlights
 
 * **Strong performance**. LION achieves state-of-the-art performance on Waymo, nuScenes, Argoverse V2, and ONCE datasets. 💪
