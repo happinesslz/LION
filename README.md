@@ -7,7 +7,6 @@
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/lion-linear-group-rnn-for-3d-object-detection/3d-object-detection-on-once)](https://paperswithcode.com/sota/3d-object-detection-on-once?p=lion-linear-group-rnn-for-3d-object-detection)
 
-
 <div align="center">
 
 
