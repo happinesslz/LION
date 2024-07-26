@@ -9,10 +9,7 @@
 
 <div align="center">
 
-
-<img src="./assets/lion.jpg" alt="Image 2" width="10%" style="margin: 0 auto;" >
-
-### [LION: Linear Group RNN for 3D Object Detection in Point Clouds](https://arxiv.org/abs/2407.18232)
+### <img src="./assets/lion.jpg" alt="Image 2" width="10%" style="margin: 0 auto;" > [LION: Linear Group RNN for 3D Object Detection in Point Clouds](https://arxiv.org/abs/2407.18232)
 
 [Zhe Liu](https://happinesslz.github.io) <sup>1,* </sup>,
 [Jinghua Hou](https://github.com/AlmoonYsl) <sup>1,* </sup>,
