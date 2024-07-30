@@ -41,7 +41,7 @@
 * **2024.07.02**: Our new works [OPEN](https://github.com/AlmoonYsl/OPEN) and [SEED](https://github.com/happinesslz/SEED) have been accepted by ECCV 2024. 🎉
 
 ## Results
-* **Waymo Val Set**
+* **Waymo Val Set~(100%)**
 
 | Model        | mAP/mAPH_L1 | mAP/mAPH_L2 |  Vec_L1   |  Vec_L2   |  Ped_L1   |  Ped_L2   |  Cyc_L1   |  Cyc_L2   | Config |
 |--------------|:-----------:|:-----------:|:---------:|:---------:|:---------:|:---------:|:---------:|:---------:|:------:|
@@ -50,14 +50,20 @@
 | LION-Mamba   |  81.4/79.4  |  75.1/73.2  | 79.5/79.1 | 71.1/70.7 | 84.9/80.4 | 77.5/73.2 | 79.7/78.7 | 76.7/75.8 |[config](tools/cfgs/lion_models/lion_mamba_waymo_8x_1f_1x_one_stride_64dim.yaml)|
 | LION-Mamba-L |  82.1/80.1  |  75.9/74.0  | 80.3/79.9 | 72.0/71.6 | 85.8/81.4 | 78.5/74.3 | 80.1/79.0 | 77.2/76.2 |[config](tools/cfgs/lion_models/lion_mamba_waymo_8x_1f_1x_one_stride_128dim.yaml)|
 
-* **NuScenes**
+Note: You could reduce the training epochs from 24 to 12~(the performance gap is within 1 mAP/mAPH) or reduce the 100% training to 20% training sets.
 
-|    Model    | Split | NDS  | mAP  | Config | Download |
-|:-----------:|:-----:|:----:|:----:|:------:|:--------:|
-| LION-RetNet |  Val  | 71.9 | 67.3 |[config](tools/cfgs/lion_models/lion_retnet_nusc_8x_1f_1x_one_stride_128dim.yaml)|          |
-|  LION-RWKV  |  Val  | 71.7 | 66.8 |[config](tools/cfgs/lion_models/lion_rwkv_nusc_8x_1f_1x_one_stride_128dim.yaml)|          |
-| LION-Mamba  |  Val  | 72.1 | 68.0 |[config](tools/cfgs/lion_models/lion_mamba_nusc_8x_1f_1x_one_stride_128dim.yaml)|          |
-| LION-Mamba  | Test  | 73.9 | 69.8 |        |          |
+* **nuScenes**
+
+|    Model    | Split | Epoch | CBGS| NDS  | mAP  | Config | Download |
+|:-----------:|:-----:|:----:|:----:|:----:|:----:|:------:|:--------:|
+| LION-RetNet |  Val  | 36 | False | 71.9 | 67.3 |[config](tools/cfgs/lion_models/lion_retnet_nusc_8x_1f_1x_one_stride_128dim.yaml)|          |
+|  LION-RWKV  |  Val  | 36 | False | 71.7 | 66.8 |[config](tools/cfgs/lion_models/lion_rwkv_nusc_8x_1f_1x_one_stride_128dim.yaml)|          |
+| LION-Mamba  |  Val  | 36 | False | 72.1 | 68.0 |[config](tools/cfgs/lion_models/lion_mamba_nusc_8x_1f_1x_one_stride_128dim.yaml)|          |
+| LION-Mamba  |  Val  | 48 | False | 72.3 | 68.2 |[config](tools/cfgs/lion_models/lion_mamba_nusc_8x_1f_1x_one_stride_128dim_ep48.yaml)|          |
+| LION-Mamba  | Test  | 36 | False | 73.9 | 69.8 |        |          |
+
+Note: Our model on nuScenes does not use CBGS for training more time and without any test-time augmentation or model ensembling!
+For obtaining more stable and better performance, you could try to train more time~(e.g., 48 epochs)
 
 * **Argoverse V2 Val Set**
 
