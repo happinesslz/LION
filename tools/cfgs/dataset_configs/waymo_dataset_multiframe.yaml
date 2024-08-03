@@ -22,7 +22,7 @@ SHARED_MEMORY_FILE_LIMIT: 35000  # set it based on the size of your shared memor
 
 SEQUENCE_CONFIG:
     ENABLED: True
-    SAMPLE_OFFSET: [-4, 0]
+    SAMPLE_OFFSET: [-3, 0]
     
 TRAIN_WITH_SPEED: True 
 
