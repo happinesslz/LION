@@ -90,11 +90,11 @@ For obtaining more stable and better performance, you could try to train more ti
 
 |    Model    | Car  | Pedestrian | Cyclist |  Config  | Download |
 |:-----------:|:----:|:----------:|:-------:|:--------:|:--------:|
-|  LION-TTT   | 78.0 |    58.6    |  69.6   |[config](tools/cfgs/once_models/second_with_lion_TTT_64dim.yaml)|          |
-| LION-xLSTM  | 77.9 |    59.3    |  67.4   |[config](tools/cfgs/once_models/second_with_lion_xLSTM_64dim.yaml)|        |
-| LION-RetNet | 77.9 |    60.2    |  69.6   |[config](tools/cfgs/once_models/second_with_lion_retnet_64dim.yaml)|       |
-| LION-Mamba  | 78.3 |    60.2    |  68.6   |[config](tools/cfgs/once_models/second_with_lion_mamba_64dim.yaml)|        |
-|  LION-RWKV  | 78.3 |    62.2    |  71.2   |[config](tools/cfgs/once_models/second_with_lion_rwkv_64dim.yaml)|         |
+|  LION-TTT   | 78.0 |    58.6    |  69.6   |[config](tools/cfgs/kitti_models/second_with_lion_TTT_64dim.yaml)|          |
+| LION-xLSTM  | 77.9 |    59.3    |  67.4   |[config](tools/cfgs/kitti_models/second_with_lion_xLSTM_64dim.yaml)|        |
+| LION-RetNet | 77.9 |    60.2    |  69.6   |[config](tools/cfgs/kitti_models/second_with_lion_retnet_64dim.yaml)|       |
+| LION-Mamba  | 78.3 |    60.2    |  68.6   |[config](tools/cfgs/kitti_models/second_with_lion_mamba_64dim.yaml)|        |
+|  LION-RWKV  | 78.3 |    62.2    |  71.2   |[config](tools/cfgs/kitti_models/second_with_lion_rwkv_64dim.yaml)|         |
 
 
 ## Installation
