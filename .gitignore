@@ -10,5 +10,6 @@ venv/
 *.pkl
 *.zip
 *.bin
+*.DS_Store
 output
 version.py
