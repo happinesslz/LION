@@ -22,7 +22,7 @@
 \* Equal contribution, ✉ Corresponding author.
 <br>
 
-[**Project Page**](https://happinesslz.github.io/projects/LION) | [**arXiv 2024**](https://arxiv.org/abs/2407.18232)
+[**Project Page**](https://happinesslz.github.io/projects/LION) | [**NeurIPS 2024**](https://arxiv.org/abs/2407.18232)
 
 <img src="./assets/all.jpg" alt="Image 2" width="60%" style="margin: 0 auto;" >
 
