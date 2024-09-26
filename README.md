@@ -144,11 +144,10 @@ For more details about LION, please refer to [GETTING_STARTED.md](docs/GETTING_S
 ```
 @article{liu2024lion,
   title={LION: Linear Group RNN for 3D Object Detection in Point Clouds},
-  author={Liu, Zhe and Hou, Jinghua and Wang, Xinyu and Ye, Xiaoqing and Wang, Jingdong and Zhao, Hengshuang and Bai, Xiang},
-  year={2024},
-  eprint={2407.18232},
-  archivePrefix={arXiv},
-}
+  author={Zhe Liu, Jinghua Hou, Xingyu Wang, Xiaoqing Ye, Jingdong Wang, Hengshuang Zhao, Xiang Bai},
+  journal={Advances in Neural Information Processing Systems},
+  year={2024}
+  }
 ```
 
 ## Acknowledgements
