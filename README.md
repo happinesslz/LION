@@ -55,24 +55,24 @@ Note: You could reduce the training epochs from 24 to 12~(the performance gap is
 
 * **nuScenes**
 
-|    Model    | Split | Epoch | CBGS| NDS  | mAP  | Config | Download |
-|:-----------:|:-----:|:----:|:----:|:----:|:----:|:------:|:--------:|
-| LION-RetNet |  Val  | 36 | False | 71.9 | 67.3 |[config](tools/cfgs/lion_models/lion_retnet_nusc_8x_1f_1x_one_stride_128dim.yaml)|          |
-|  LION-RWKV  |  Val  | 36 | False | 71.7 | 66.8 |[config](tools/cfgs/lion_models/lion_rwkv_nusc_8x_1f_1x_one_stride_128dim.yaml)|          |
-| LION-Mamba  |  Val  | 36 | False | 72.1 | 68.0 |[config](tools/cfgs/lion_models/lion_mamba_nusc_8x_1f_1x_one_stride_128dim.yaml)|          |
-| LION-Mamba  |  Val  | 48 | False | 72.3 | 68.2 |[config](tools/cfgs/lion_models/lion_mamba_nusc_8x_1f_1x_one_stride_128dim_ep48.yaml)|          |
-| LION-Mamba  | Test  | 36 | False | 73.9 | 69.8 |        |          |
+|    Model    | Split | Epoch | CBGS| NDS  | mAP  | Config | Download (Baidu Pan) | Download (Google Drive) |
+|:-----------:|:-----:|:----:|:----:|:----:|:----:|:------:|:--------------------:|:-----------------------:|
+| LION-RetNet |  Val  | 36 | False | 71.9 | 67.3 |[config](tools/cfgs/lion_models/lion_retnet_nusc_8x_1f_1x_one_stride_128dim.yaml)|       [checkpoint_epoch_36_nus_retnet.pth]( https://pan.baidu.com/s/11m4Tka9VRoLM7dO_-CQfng)  (ksmp)       |        [checkpoint_epoch_36_nus_retnet.pth](https://drive.google.com/file/d/1LDM6Iq91muZhzFMMa0WqKtjzJwYVadF6/view?usp=drive_link)                  |
+|  LION-RWKV  |  Val  | 36 | False | 71.7 | 66.8 |[config](tools/cfgs/lion_models/lion_rwkv_nusc_8x_1f_1x_one_stride_128dim.yaml)|                      |                         |
+| LION-Mamba  |  Val  | 36 | False | 72.1 | 68.0 |[config](tools/cfgs/lion_models/lion_mamba_nusc_8x_1f_1x_one_stride_128dim.yaml)|       [checkpoint_epoch_36_nus_mamba.pth](https://pan.baidu.com/s/1fkGHULD3XVwN6qgjqahWIA)  (2tvc)       |        [checkpoint_epoch_36_nus_mamba.pth](https://drive.google.com/file/d/1bBzZcZUukt7B5aD3bmKlM2mT7SL8q3Fv/view?usp=drive_link)                  |
+| LION-Mamba  |  Val  | 48 | False | 72.3 | 68.2 |[config](tools/cfgs/lion_models/lion_mamba_nusc_8x_1f_1x_one_stride_128dim_ep48.yaml)|                      |                         |
+| LION-Mamba  | Test  | 36 | False | 73.9 | 69.8 |        |                      |                         |
 
 Note: Our model on nuScenes does not use CBGS for training more time and without any test-time augmentation or model ensembling!
 For obtaining more stable and better performance, you could try to train more time~(e.g., 48 epochs)
 
 * **Argoverse V2 Val Set**
 
-|    Model    | mAP  | Config | Download |
-|:-----------:|:----:|:------:|:--------:|
-| LION-RetNet | 40.7 |[config](tools/cfgs/lion_models/lion_retnet_1f_1x_argo_128dim_sparse_v2.yaml)|          |
-|  LION-RWKV  | 41.1 |[config](tools/cfgs/lion_models/lion_rwkv_1f_1x_argo_128dim_sparse_v2.yaml)|          |
-| LION-Mamba  | 41.5 |[config](tools/cfgs/lion_models/lion_mamba_1f_1x_argo_128dim_sparse_v2.yaml)|          |
+|    Model    | mAP  | Config |                                        Download  (Baidu Pan)                                        | Download  (Google Drive) |
+|:-----------:|:----:|:------:|:---------------------------------------------------------------------------------------------------:|:------------------------:|
+| LION-RetNet | 40.7 |[config](tools/cfgs/lion_models/lion_retnet_1f_1x_argo_128dim_sparse_v2.yaml)|  [checkpoint_epoch_12_argov2_retnet.pth]( https://pan.baidu.com/s/1Te8HhIVJpxarFLvr1GMtWQ) (yghm)   |           [checkpoint_epoch_12_argov2_retnet.pth](https://drive.google.com/file/d/17ZTdThUvK2tnsz0ZhVUrCuJf3bvxQDTl/view?usp=drive_link)           |
+|  LION-RWKV  | 41.1 |[config](tools/cfgs/lion_models/lion_rwkv_1f_1x_argo_128dim_sparse_v2.yaml)|  [checkpoint_epoch_12_argov2_rwkv.pth](https://pan.baidu.com/s/14r1OKM5Eh4JMURIvZ5i2hg)    (cr4e)   |           [checkpoint_epoch_12_argov2_rwkv.pth](https://drive.google.com/file/d/15zX5OFvd0WkdE8jsqRXMJ9JdM16gfGkM/view?usp=drive_link)           |
+| LION-Mamba  | 41.5 |[config](tools/cfgs/lion_models/lion_mamba_1f_1x_argo_128dim_sparse_v2.yaml)|  [checkpoint_epoch_12_argov2_mamba.pth](https://pan.baidu.com/s/1IPMhAgW4Oq14-pkfEPkrSA)   (k63i)   |           [checkpoint_epoch_12_argov2_mamba.pth](https://drive.google.com/file/d/1NfgKZZZJDodhWnp-Yi3Bi-yXHWM9mW1U/view?usp=drive_link)           |
 
 * **ONCE Val Set**
 
@@ -138,7 +138,7 @@ For more details about LION, please refer to [GETTING_STARTED.md](docs/GETTING_S
 - [x] Release the code of LION on the Argoverse V2.
 - [x] Release the code of LION on the ONCE.
 - [x] Release the code of LION on the KITTI.
-- [ ] Release all checkpoints of LION.
+- [x] Release some important checkpoints of LION (nuScenes and Argoverse v2).
 - [ ] Support more linear RNNs.
 
 ## Citation
