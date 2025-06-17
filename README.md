@@ -37,6 +37,7 @@
 * **More friendly**. LION can train all models on less 24G GPU memory (i.e., RTX 3090, RTX4090, V100 and A100 are enough to train our LION). 😀
 
 ## News
+* **2025.06.16**: Our new work about Transformer-Mamba architecture [HybridTM](https://github.com/deepinact/HybridTM) have been accepted by IROS 2025 as **Oral** presentation. 🎉
 * **2024.09.26**: LION has been accepted by NeurIPS 2024. 🎉
 * **2024.07.25**: LION paper released. 🔥
 * **2024.07.02**: Our new works [OPEN](https://github.com/AlmoonYsl/OPEN) and [SEED](https://github.com/happinesslz/SEED) have been accepted by ECCV 2024. 🎉
